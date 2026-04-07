@@ -1,0 +1,236 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Surfaces */
+  --background: #f1f5f9;
+  --foreground: #1e293b;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+
+  /* Brand */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-accent: #059669;
+  --color-cta: #f97316;
+
+  /* Semantic */
+  --color-error: #dc2626;
+  --color-warning: #d97706;
+  --color-success: #059669;
+
+  /* Text hierarchy */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  /* Borders */
+  --border: #e2e8f0;
+  --border-muted: #f1f5f9;
+
+  /* Animation tokens */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 350ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* Status indicator pulse */
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-status {
+  animation: pulse-status 2s ease-in-out infinite;
+}
+
+/* Bus marker radar pulse */
+@keyframes radar-ping {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+.animate-radar-ping {
+  animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Slide up from bottom */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0.5; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Fade in and slide up for cards */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Stagger delays */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+/* Fade in */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+/* Shimmer skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Section heading animation */
+@keyframes heading-slide {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-heading {
+  animation: heading-slide 0.4s ease-out;
+}
+
+/* Timer pulse */
+@keyframes timer-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-timer-pulse {
+  animation: timer-pulse 1s ease-in-out infinite;
+}
+
+/* Deep navy gradient */
+.bg-gradient-brand {
+  background: linear-gradient(135deg, #172554 0%, #1e3a5f 50%, #1e40af 100%);
+}
+
+/* Map dot-matrix pattern */
+.map-dots-bg {
+  background-color: #f8fafc;
+  background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(23, 37, 84, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Global focus ring - visible for keyboard nav */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Interactive card — adds cursor + hover lift */
+.card-interactive {
+  @apply cursor-pointer transition-all duration-200;
+}
+.card-interactive:hover {
+  @apply -translate-y-0.5 shadow-md;
+}
+.card-interactive:active {
+  @apply translate-y-0 shadow-sm;
+}
+
+/* Status badge base */
+.badge {
+  @apply inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full;
+}
+
+/* Input focus ring */
+.input-field {
+  @apply w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white
+    focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400
+    placeholder:text-slate-400 transition-all duration-200;
+}
+
+/* Primary button */
+.btn-primary {
+  @apply bg-blue-600 text-white py-2.5 rounded-xl font-semibold
+    hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5
+    active:translate-y-0 active:shadow-md
+    transition-all duration-200 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none;
+}
+
+/* Secondary button */
+.btn-secondary {
+  @apply bg-white text-slate-700 border border-slate-200 py-2.5 rounded-xl font-medium
+    hover:bg-slate-50 hover:border-slate-300
+    transition-all duration-200;
+}
+
+/* Dark CTA button */
+.btn-dark {
+  @apply bg-slate-900 text-white py-3 rounded-xl font-semibold
+    hover:bg-slate-800 hover:shadow-lg
+    active:scale-[0.98]
+    transition-all duration-200 disabled:opacity-50;
+}
+
+/* Print styles for ticket download */
+@media print {
+  nav, .no-print { display: none !important; }
+  body { background: white !important; }
+  .ticket-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+  .map-dots-bg { background: none !important; }
+}

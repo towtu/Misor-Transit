@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PASSENGER
+  STAFF
+  ADMIN
+}
+
+enum UserType {
+  REGULAR
+  STUDENT
+  SENIOR_CITIZEN
+  PWD
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum Direction {
+  TAGOLOAN_TO_CDO
+  CDO_TO_TAGOLOAN
+}
+
+enum BusType {
+  COASTER
+  FULL_BUS
+}
+
+enum BusStatus {
+  PARKED
+  RUNNING
+  PAUSED
+  MAINTENANCE
+}
+
+enum SeatStatus {
+  AVAILABLE
+  ON_HOLD
+  BOOKED
+  DISABLED
+}
+
+enum BookingStatus {
+  ON_HOLD
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  EXPIRED
+}
+
+enum PaymentMethod {
+  GCASH
+  MAYA
+  CARD
+  GRABPAY
+  BPI
+  UNIONBANK
+  CASH
+}
+
+model User {
+  id                 String             @id @default(cuid())
+  email              String             @unique
+  phone              String?            @unique
+  password           String
+  firstName          String
+  lastName           String
+  dateOfBirth        DateTime?
+  role               UserRole           @default(PASSENGER)
+  userType           UserType           @default(REGULAR)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  verificationIdUrl  String?
+  verificationNote   String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  bookings           Booking[]
+  sessions           Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Route {
+  id        String     @id @default(cuid())
+  name      String
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  stops     Stop[]
+  buses     Bus[]
+  fareRules FareRule[]
+}
+
+model Stop {
+  id              String    @id @default(cuid())
+  routeId         String
+  route           Route     @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  name            String
+  lat             Float
+  lng             Float
+  orderIndex      Int
+  pickupBookings  Booking[] @relation("pickupStop")
+  dropoffBookings Booking[] @relation("dropoffStop")
+
+  @@unique([routeId, orderIndex])
+}
+
+model FareRule {
+  id             String @id @default(cuid())
+  routeId        String
+  route          Route  @relation(fields: [routeId], references: [id])
+  fromStopIndex  Int
+  toStopIndex    Int
+  regularFare    Float
+  discountedFare Float
+  createdAt      DateTime @default(now())
+
+  @@unique([routeId, fromStopIndex, toStopIndex])
+}
+
+model Bus {
+  id                  String    @id @default(cuid())
+  plateNumber         String    @unique
+  name                String
+  busType             BusType
+  passcode            String?
+  routeId             String
+  route               Route     @relation(fields: [routeId], references: [id])
+  direction           Direction @default(TAGOLOAN_TO_CDO)
+  status              BusStatus @default(PARKED)
+  currentStopIdx      Int       @default(0)
+  startStopIdx        Int       @default(0)
+  simulationStartedAt DateTime?
+  simSpeed            Int       @default(2)
+  departureTime       DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  seats               Seat[]
+  bookings            Booking[]
+}
+
+model Seat {
+  id       String     @id @default(cuid())
+  busId    String
+  bus      Bus        @relation(fields: [busId], references: [id], onDelete: Cascade)
+  label    String
+  row      Int
+  col      Int
+  status   SeatStatus @default(AVAILABLE)
+  isAisle  Boolean    @default(false)
+  bookings Booking[]
+
+  @@unique([busId, label])
+  @@unique([busId, row, col])
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id])
+  guestName     String?
+  referenceCode String?       @unique
+  busId         String
+  bus           Bus           @relation(fields: [busId], references: [id])
+  seatId        String
+  seat          Seat          @relation(fields: [seatId], references: [id])
+  pickupStopId  String
+  pickupStop    Stop          @relation("pickupStop", fields: [pickupStopId], references: [id])
+  dropoffStopId String
+  dropoffStop   Stop          @relation("dropoffStop", fields: [dropoffStopId], references: [id])
+  fare          Float
+  fareType      UserType
+  status        BookingStatus @default(ON_HOLD)
+  holdExpiresAt DateTime?
+  qrCode        String?
+  boardedAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  payment       Payment?
+}
+
+model Payment {
+  id           String        @id @default(cuid())
+  bookingId    String        @unique
+  booking      Booking       @relation(fields: [bookingId], references: [id])
+  paymongoId   String?       @unique
+  amount       Float
+  status       PaymentStatus @default(PENDING)
+  method       PaymentMethod?
+  paidAt       DateTime?
+  refundedAt   DateTime?
+  paymongoData Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}

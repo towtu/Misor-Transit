@@ -27,10 +27,20 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
 
+# playwright
+.playwright-cli/
+
+# prisma generated client (regenerated on deploy)
+/src/generated/prisma
+/app/generated/prisma
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/app/generated/prisma
