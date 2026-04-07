@@ -2,6 +2,8 @@ import prisma from '@/lib/prisma';
 import { computeBusPosition } from '@/lib/busPosition';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const buses = await prisma.bus.findMany({
