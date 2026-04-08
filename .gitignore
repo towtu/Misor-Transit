@@ -35,6 +35,9 @@ yarn-error.log*
 # playwright
 .playwright-cli/
 
+# ai planning docs
+/docs/superpowers/
+
 # prisma generated client (regenerated on deploy)
 /src/generated/prisma
 /app/generated/prisma
